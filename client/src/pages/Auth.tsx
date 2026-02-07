@@ -12,6 +12,9 @@ export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
     const [, setLocation] = useLocation();
@@ -22,10 +25,14 @@ export default function AuthPage() {
 
         try {
             const endpoint = isLogin ? "/api/login" : "/api/register";
+            const body = isLogin
+                ? { username, password }
+                : { username, password, firstName, lastName, email };
+
             const res = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
@@ -63,6 +70,48 @@ export default function AuthPage() {
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="space-y-4">
+                        {!isLogin && (
+                            <>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label htmlFor="firstName">First Name</Label>
+                                        <Input
+                                            id="firstName"
+                                            type="text"
+                                            required
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            className="mt-1"
+                                            placeholder="John"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="lastName">Last Name</Label>
+                                        <Input
+                                            id="lastName"
+                                            type="text"
+                                            required
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            className="mt-1"
+                                            placeholder="Doe"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="mt-1"
+                                        placeholder="john@example.com"
+                                    />
+                                </div>
+                            </>
+                        )}
                         <div>
                             <Label htmlFor="username">Username</Label>
                             <Input
