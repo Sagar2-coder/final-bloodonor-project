@@ -7,6 +7,7 @@ export interface IStorage {
   createDonor(donor: InsertDonor & { userId: string }): Promise<Donor>;
   getDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver" }): Promise<Donor[]>;
   getDonorByUserId(userId: string): Promise<Donor | undefined>;
+  updateDonor(userId: string, donor: Partial<InsertDonor>): Promise<Donor | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -61,6 +62,15 @@ export class DatabaseStorage implements IStorage {
   async getDonorByUserId(userId: string): Promise<Donor | undefined> {
     const [donor] = await db.select().from(donors).where(eq(donors.userId, userId));
     return donor;
+  }
+
+  async updateDonor(userId: string, updateData: Partial<InsertDonor>): Promise<Donor | undefined> {
+    const [updated] = await db
+      .update(donors)
+      .set(updateData)
+      .where(eq(donors.userId, userId))
+      .returning();
+    return updated;
   }
 }
 

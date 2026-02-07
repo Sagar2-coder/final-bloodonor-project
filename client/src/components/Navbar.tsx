@@ -55,7 +55,7 @@ export function Navbar() {
                   </Button>
                 </Link>
               )}
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full ring-2 ring-primary/10 hover:ring-primary/20">
@@ -78,16 +78,23 @@ export function Navbar() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {!profile && (
-                     <DropdownMenuItem asChild>
-                       <Link href="/register" className="w-full cursor-pointer text-primary font-medium">
-                         Complete Profile
-                       </Link>
-                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/register" className="w-full cursor-pointer text-primary font-medium">
+                        Complete Profile
+                      </Link>
+                    </DropdownMenuItem>
                   )}
                   {profile && (
-                    <DropdownMenuItem className="text-muted-foreground" disabled>
-                      <span className="capitalize">Role: {profile.userType}</span>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/profile" className="w-full cursor-pointer font-medium">
+                          Edit Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-muted-foreground" disabled>
+                        <span className="capitalize">Role: {profile.userType}</span>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => logout()} className="text-red-600 focus:text-red-600 cursor-pointer">

@@ -41,14 +41,25 @@ export const api = {
       },
     },
     getMine: {
-        method: 'GET' as const,
-        path: '/api/donors/me',
-        responses: {
-            200: z.custom<typeof donors.$inferSelect>(),
-            404: errorSchemas.notFound,
-            401: errorSchemas.unauthorized
-        }
-    }
+      method: 'GET' as const,
+      path: '/api/donors/me',
+      responses: {
+        200: z.custom<typeof donors.$inferSelect>(),
+        404: errorSchemas.notFound,
+        401: errorSchemas.unauthorized
+      }
+    },
+    update: {
+      method: 'PUT' as const,
+      path: '/api/donors/me',
+      input: insertDonorSchema.partial(),
+      responses: {
+        200: z.custom<typeof donors.$inferSelect>(),
+        400: errorSchemas.validation,
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
+    },
   },
 };
 

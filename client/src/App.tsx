@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import DonorsList from "@/pages/DonorsList";
 import Register from "@/pages/Register";
 import About from "@/pages/About";
+import Profile from "@/pages/Profile";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/donors" component={DonorsList} />
       <Route path="/register" component={Register} />
+      <Route path="/profile" component={Profile} />
       <Route path="/about" component={About} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

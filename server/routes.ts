@@ -76,5 +76,33 @@ export async function registerRoutes(
     res.json(donor);
   });
 
+  app.put(api.donors.update.path, async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const input = api.donors.update.input.parse(req.body);
+      const userId = (req.user as any).claims.sub;
+
+      const existing = await storage.getDonorByUserId(userId);
+      if (!existing) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      const updated = await storage.updateDonor(userId, input);
+      res.json(updated);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({
+          message: err.errors[0].message,
+          field: err.errors[0].path.join('.'),
+        });
+      } else {
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    }
+  });
+
   return httpServer;
 }
