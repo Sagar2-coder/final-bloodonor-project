@@ -1,4 +1,4 @@
-import * as client from "openid-client";
+ import * as client from "openid-client";
 import { Strategy, type VerifyFunction } from "openid-client/passport";
 
 import passport from "passport";
