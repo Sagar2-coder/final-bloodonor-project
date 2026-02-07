@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth } from "./replit_integrations/auth/replitAuth";
+import { setupAuth as setupReplitAuth } from "./replit_integrations/auth/replitAuth";
+import { setupAuth as setupMockAuth } from "./replit_integrations/auth/mockAuth";
+
+const setupAuth = process.env.REPL_ID === 'local' ? setupMockAuth : setupReplitAuth;
 import { api } from "@shared/routes";
 import { z } from "zod";
 
