@@ -36,7 +36,7 @@ export async function registerRoutes(
     try {
       const input = api.donors.create.input.parse(req.body);
       // Link to authenticated user
-      const userId = (req.user as any).claims.sub;
+      const userId = (req.user as any).id;
 
       // Check if profile already exists?
       const existing = await storage.getDonorByUserId(userId);
@@ -66,7 +66,7 @@ export async function registerRoutes(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const userId = (req.user as any).claims.sub;
+    const userId = (req.user as any).id;
     const donor = await storage.getDonorByUserId(userId);
 
     if (!donor) {
@@ -83,7 +83,7 @@ export async function registerRoutes(
 
     try {
       const input = api.donors.update.input.parse(req.body);
-      const userId = (req.user as any).claims.sub;
+      const userId = (req.user as any).id;
 
       const existing = await storage.getDonorByUserId(userId);
       if (!existing) {
