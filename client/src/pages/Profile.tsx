@@ -53,7 +53,7 @@ export default function Profile() {
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
-            setLocation("/api/login");
+            setLocation("/auth");
         }
     }, [authLoading, isAuthenticated, setLocation]);
 
