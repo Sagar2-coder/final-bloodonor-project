@@ -43,15 +43,17 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           {!isAuthenticated ? (
-            <Button onClick={() => window.location.href = "/api/login"} variant="default" className="rounded-full px-6 shadow-lg shadow-primary/20">
-              Sign In
-            </Button>
+            <Link href="/auth">
+              <Button variant="default" className="rounded-full px-6 shadow-lg shadow-primary/20">
+                Sign In
+              </Button>
+            </Link>
           ) : (
             <div className="flex items-center gap-4">
               {!profile && (
-                <Link href="/register">
-                  <Button variant="outline" className="hidden sm:flex border-primary/20 text-primary hover:bg-primary/5 hover:text-primary">
-                    Register as Donor
+                <Link href="/donors" className="hidden sm:flex ml-4">
+                  <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5 hover:text-primary">
+                    Find Donors
                   </Button>
                 </Link>
               )}

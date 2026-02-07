@@ -9,6 +9,7 @@ import DonorsList from "@/pages/DonorsList";
 import Register from "@/pages/Register";
 import About from "@/pages/About";
 import Profile from "@/pages/Profile";
+import AuthPage from "@/pages/Auth";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
         <Route path="/register" component={Register} />
         <Route path="/profile" component={Profile} />
         <Route path="/about" component={About} />
+        <Route path="/auth" component={AuthPage} />
         {/* Fallback to 404 */}
         <Route component={NotFound} />
       </Switch>
