@@ -119,7 +119,8 @@ export function setupAuth(app: Express) {
         });
     });
 
-    app.get("/api/user", (req, res) => {
+
+    app.get("/api/auth/user", (req, res) => {
         if (req.isAuthenticated()) {
             res.json(req.user);
         } else {
