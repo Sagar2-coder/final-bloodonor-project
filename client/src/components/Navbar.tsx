@@ -51,9 +51,9 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-4">
               {!profile && (
-                <Link href="/donors" className="hidden sm:flex ml-4">
-                  <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5 hover:text-primary">
-                    Find Donors
+                <Link href="/register">
+                  <Button variant="outline" className="hidden sm:flex border-primary/20 text-primary hover:bg-primary/5 hover:text-primary">
+                    Register as Donor
                   </Button>
                 </Link>
               )}

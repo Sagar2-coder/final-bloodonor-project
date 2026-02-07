@@ -45,7 +45,7 @@ export default function Register() {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      setLocation("/api/login");
+      setLocation("/auth");
     }
   }, [authLoading, isAuthenticated, setLocation]);
 
@@ -62,7 +62,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
           <div className="mb-10 text-center">
@@ -73,7 +73,7 @@ export default function Register() {
           <div className="bg-card rounded-3xl shadow-xl shadow-black/5 border border-border p-8 md:p-10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
@@ -222,8 +222,8 @@ export default function Register() {
                   )}
                 />
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-14 text-lg rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/25 transition-all mt-8"
                   disabled={createDonor.isPending}
                 >
