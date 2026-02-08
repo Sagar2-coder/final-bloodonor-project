@@ -76,6 +76,9 @@ export function Navbar() {
                       <p className="text-xs leading-none text-muted-foreground">
                         {user?.email}
                       </p>
+                      <p className="text-[10px] leading-none text-muted-foreground/30 font-mono mt-1 pt-1 border-t border-border/10">
+                        ID: {user?.id}
+                      </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

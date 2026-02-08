@@ -3,14 +3,16 @@ import passport from "passport";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
+import connectPg from "connect-pg-simple";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { users } from "@shared/models/auth";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq } from "drizzle-orm";
 import type { User } from "@shared/models/auth";
 
 const scryptAsync = promisify(scrypt);
+const PostgresStore = connectPg(session);
 
 async function hashPassword(password: string) {
     const salt = randomBytes(16).toString("hex");
@@ -30,9 +32,14 @@ export function setupAuth(app: Express) {
         secret: process.env.SESSION_SECRET || "r3pl1t",
         resave: false,
         saveUninitialized: false,
-        store: undefined, // Memory store by default
+        store: new PostgresStore({
+            pool,
+            tableName: "sessions",
+            createTableIfMissing: true,
+        }),
         cookie: {
             secure: app.get("env") === "production",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         },
     };
 
