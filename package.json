@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://sagar2-coder.github.io/final-bloodonor-project/",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
     "build": "tsx script/build.ts",
