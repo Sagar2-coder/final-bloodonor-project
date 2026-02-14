@@ -4,8 +4,8 @@ import { type InsertDonor } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 // Fetch all donors (public info)
-export function useDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver" }) {
-  const queryKey = [api.donors.list.path, filters?.bloodGroup, filters?.userType].filter(Boolean);
+export function useDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver"; city?: string }) {
+  const queryKey = [api.donors.list.path, filters?.bloodGroup, filters?.userType, filters?.city].filter(Boolean);
 
   return useQuery({
     queryKey,
@@ -13,6 +13,7 @@ export function useDonors(filters?: { bloodGroup?: string; userType?: "donor" | 
       const url = new URL(window.location.origin + api.donors.list.path);
       if (filters?.bloodGroup && filters.bloodGroup !== "all") url.searchParams.append("bloodGroup", filters.bloodGroup);
       if (filters?.userType) url.searchParams.append("userType", filters.userType);
+      if (filters?.city) url.searchParams.append("city", filters.city);
 
       const res = await fetch(url.toString(), { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch donors");

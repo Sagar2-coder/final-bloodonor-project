@@ -23,6 +23,8 @@ class AuthStorage implements IAuthStorage {
         target: users.id,
         set: {
           ...userData,
+          role: "user",
+          status: "pending",
           updatedAt: new Date(),
         },
       })

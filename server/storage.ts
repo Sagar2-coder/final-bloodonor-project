@@ -1,13 +1,16 @@
 import { donors, type Donor, type InsertDonor } from "@shared/schema";
+import { users, type User } from "@shared/models/auth";
 import { db } from "./db";
 import { eq, lte, and, sql } from "drizzle-orm";
 import { subMonths } from "date-fns";
 
 export interface IStorage {
   createDonor(donor: InsertDonor & { userId: string }): Promise<Donor>;
-  getDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver" }): Promise<Donor[]>;
+  getDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver"; city?: string }): Promise<Donor[]>;
+  getAllDonorsWithUsers(): Promise<(Donor & { user: User })[]>;
   getDonorByUserId(userId: string): Promise<Donor | undefined>;
   updateDonor(userId: string, donor: Partial<InsertDonor>): Promise<Donor | undefined>;
+  updateUserStatus(userId: string, status: "approved" | "rejected"): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -16,47 +19,43 @@ export class DatabaseStorage implements IStorage {
     return donor;
   }
 
-  async getDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver" }): Promise<Donor[]> {
+  async getDonors(filters?: { bloodGroup?: string; userType?: "donor" | "receiver"; city?: string }): Promise<Donor[]> {
     const threeMonthsAgo = subMonths(new Date(), 3);
-
-    // Convert JS date to SQL string or comparison
-    // Actually, drizzle handles date objects fine if column is 'date' or 'timestamp'
-    // But for 'date' column type, it might expect string 'YYYY-MM-DD'.
-    // Let's use SQL operator for safety or just pass the Date object.
-
-    let conditions = [];
-
-    // Filter by userType if provided, default only show 'donor' in public list usually? 
-    // The requirement says "Only those peoples details should be shown who has not donated blood before 3 month".
-    // This implies we are listing donors.
-    // If userType is 'receiver', maybe they don't have a 'lastDonationDate' that matters, or we just show them.
-    // Let's assume the public list is for DONORS.
-
-    // We will show donors who are ELIGIBLE.
-    // Eligible means: lastDonationDate <= 3 months ago.
+    let conditions = [
+      eq(users.status, "approved"),
+      lte(donors.lastDonationDate, threeMonthsAgo.toISOString().split('T')[0])
+    ];
 
     if (filters?.bloodGroup) {
       conditions.push(eq(donors.bloodGroup, filters.bloodGroup));
+    }
+
+    if (filters?.city) {
+      // Case insensitive match would be better but let's stick to simple eq or like if supported.
+      conditions.push(sql`lower(${donors.city}) = lower(${filters.city})`);
     }
 
     if (filters?.userType) {
       conditions.push(eq(donors.userType, filters.userType));
     }
 
-    // "Only those peoples details should be shown who has not donated blood before 3 month"
-    // This phrasing is tricky. "not donated before 3 month".
-    // "Has not donated blood [in the last] 3 months"? 
-    // If I donated 1 month ago, I should NOT be shown.
-    // If I donated 4 months ago, I SHOULD be shown.
-    // So `lastDonationDate` < `threeMonthsAgo`.
+    const results = await db.select({ donor: donors })
+      .from(donors)
+      .innerJoin(users, eq(donors.userId, users.id))
+      .where(and(...conditions));
 
-    conditions.push(lte(donors.lastDonationDate, threeMonthsAgo.toISOString().split('T')[0]));
+    return results.map(r => r.donor);
+  }
 
-    if (conditions.length === 0) {
-      return await db.select().from(donors);
-    }
+  async getAllDonorsWithUsers(): Promise<(Donor & { user: User })[]> {
+    const results = await db.select({
+      donor: donors,
+      user: users
+    })
+      .from(donors)
+      .innerJoin(users, eq(donors.userId, users.id));
 
-    return await db.select().from(donors).where(and(...conditions));
+    return results.map(r => ({ ...r.donor, user: r.user }));
   }
 
   async getDonorByUserId(userId: string): Promise<Donor | undefined> {
@@ -69,6 +68,15 @@ export class DatabaseStorage implements IStorage {
       .update(donors)
       .set(updateData)
       .where(eq(donors.userId, userId))
+      .returning();
+    return updated;
+  }
+
+  async updateUserStatus(userId: string, status: "approved" | "rejected"): Promise<User | undefined> {
+    const [updated] = await db
+      .update(users)
+      .set({ status })
+      .where(eq(users.id, userId))
       .returning();
     return updated;
   }

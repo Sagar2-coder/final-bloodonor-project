@@ -3,16 +3,16 @@ import passport from "passport";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
-import connectPg from "connect-pg-simple";
+import createMemoryStore from "memorystore";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { users } from "@shared/models/auth";
-import { db, pool } from "./db";
+import { db } from "./db";
 import { eq } from "drizzle-orm";
 import type { User } from "@shared/models/auth";
 
 const scryptAsync = promisify(scrypt);
-const PostgresStore = connectPg(session);
+const MemoryStore = createMemoryStore(session);
 
 async function hashPassword(password: string) {
     const salt = randomBytes(16).toString("hex");
@@ -32,10 +32,8 @@ export function setupAuth(app: Express) {
         secret: process.env.SESSION_SECRET || "r3pl1t",
         resave: false,
         saveUninitialized: false,
-        store: new PostgresStore({
-            pool,
-            tableName: "sessions",
-            createTableIfMissing: true,
+        store: new MemoryStore({
+            checkPeriod: 86400000 // prune expired entries every 24h
         }),
         cookie: {
             secure: app.get("env") === "production",
@@ -61,7 +59,7 @@ export function setupAuth(app: Express) {
                 if (!user.password || !(await comparePasswords(password, user.password))) {
                     return done(null, false, { message: "Incorrect password." });
                 }
-                if (!user.isApproved) {
+                if (user.status !== "approved") {
                     return done(null, false, { message: "Your account is pending manual approval." });
                 }
                 return done(null, user);
@@ -94,13 +92,17 @@ export function setupAuth(app: Express) {
             }
 
             const hashedPassword = await hashPassword(password);
+            // Drizzle SQLite insert returns the inserted row if using returning(), but better-sqlite3 support for returning might vary or return an array.
+            // Drizzle-orm structure implies returning() works for sqlite too in recent versions.
             const [newUser] = await db.insert(users).values({
                 username,
                 password: hashedPassword,
                 firstName,
                 lastName,
                 email,
-                isApproved: false,
+                role: "user",
+                status: "pending",
+                // IDs and dates are defaulted
             }).returning();
 
             req.login(newUser, (err) => {

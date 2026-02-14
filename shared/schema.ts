@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, date, varchar } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { users } from "./models/auth";
@@ -6,16 +6,17 @@ import { users } from "./models/auth";
 export * from "./models/auth";
 
 // === TABLE DEFINITIONS ===
-export const donors = pgTable("donors", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id), // Link to auth user
+export const donors = sqliteTable("donors", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull().references(() => users.id), // Link to auth user
   name: text("name").notNull(),
   address: text("address").notNull(),
+  city: text("city").notNull(),
   bloodGroup: text("blood_group").notNull(),
   contactNumber: text("contact_number").notNull(),
-  lastDonationDate: date("last_donation_date").notNull(),
+  lastDonationDate: text("last_donation_date").notNull(), // SQLite doesn't have native DATE, use ISO string
   userType: text("user_type", { enum: ["donor", "receiver"] }).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()),
 });
 
 // === BASE SCHEMAS ===

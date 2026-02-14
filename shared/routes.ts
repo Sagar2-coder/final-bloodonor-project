@@ -24,6 +24,7 @@ export const api = {
       path: '/api/donors',
       input: z.object({
         bloodGroup: z.string().optional(),
+        city: z.string().optional(),
         userType: z.enum(["donor", "receiver"]).optional(),
       }).optional(),
       responses: {

@@ -15,12 +15,21 @@ export async function registerRoutes(
   // Setup Auth first
   await setupAuth(app);
 
+  // Middleware for Admin access
+  const isAdmin = (req: any, res: any, next: any) => {
+    if (req.isAuthenticated() && req.user.role === "admin") {
+      return next();
+    }
+    return res.status(403).json({ message: "Forbidden: Admins only" });
+  };
+
   // Donors API
   app.get(api.donors.list.path, async (req, res) => {
     const bloodGroup = req.query.bloodGroup as string | undefined;
+    const city = req.query.city as string | undefined;
     const userType = req.query.userType as "donor" | "receiver" | undefined;
 
-    const donors = await storage.getDonors({ bloodGroup, userType });
+    const donors = await storage.getDonors({ bloodGroup, userType, city });
 
     // Filter sensitive info (contactNumber)
     const publicDonors = donors.map(({ contactNumber, ...rest }) => rest);
@@ -102,6 +111,24 @@ export async function registerRoutes(
         res.status(500).json({ message: "Internal Server Error" });
       }
     }
+  });
+
+  // Admin Routes
+  app.get("/api/admin/donors", isAdmin, async (req, res) => {
+    const donors = await storage.getAllDonorsWithUsers();
+    res.json(donors);
+  });
+
+  app.post("/api/admin/users/:id/approve", isAdmin, async (req, res) => {
+    const updated = await storage.updateUserStatus(req.params.id, "approved");
+    if (!updated) return res.status(404).send("User not found");
+    res.json(updated);
+  });
+
+  app.post("/api/admin/users/:id/reject", isAdmin, async (req, res) => {
+    const updated = await storage.updateUserStatus(req.params.id, "rejected");
+    if (!updated) return res.status(404).send("User not found");
+    res.json(updated);
   });
 
   return httpServer;

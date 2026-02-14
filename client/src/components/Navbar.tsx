@@ -25,10 +25,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-colors">
-            <img src="/logo.svg" alt="Thebloodonor Logo" className="h-6 w-6" />
+            <img src="/logo.svg" alt="TheBlooDonor Logo" className="h-6 w-6" />
           </div>
           <span className="text-xl font-bold font-display tracking-tight text-foreground">
-            Thebloodonor
+            TheBlooDonor
           </span>
         </Link>
 
@@ -103,6 +103,13 @@ export function Navbar() {
                         <span className="capitalize">Role: {profile.userType}</span>
                       </DropdownMenuItem>
                     </>
+                  )}
+                  {user?.role === "admin" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="w-full cursor-pointer font-medium text-destructive">
+                        Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => logout()} className="text-red-600 focus:text-red-600 cursor-pointer">

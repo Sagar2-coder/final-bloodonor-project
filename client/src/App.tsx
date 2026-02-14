@@ -10,6 +10,7 @@ import Register from "@/pages/Register";
 import About from "@/pages/About";
 import Profile from "@/pages/Profile";
 import AuthPage from "@/pages/Auth";
+import AdminPanel from "@/pages/AdminPanel";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/profile" component={Profile} />
         <Route path="/about" component={About} />
         <Route path="/auth" component={AuthPage} />
+        <Route path="/admin" component={AdminPanel} />
         {/* Fallback to 404 */}
         <Route component={NotFound} />
       </Switch>

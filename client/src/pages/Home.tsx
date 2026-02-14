@@ -117,14 +117,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold font-display mb-4">How It Works</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Saving lives is easier than you think. Join our community in three simple steps.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12 relative">
+            <div className="hidden md:block absolute top-12 left-[16%] ring-0 w-[68%] h-0.5 bg-gradient-to-r from-transparent via-border to-transparent border-t-2 border-dashed border-border/60 -z-10" />
+
+            <div className="text-center relative">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-background relative z-10">
+                <span className="text-3xl font-bold text-primary">1</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Register</h3>
+              <p className="text-muted-foreground">Create your profile and enter your blood group and location.</p>
+            </div>
+            <div className="text-center relative">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-background relative z-10">
+                <span className="text-3xl font-bold text-primary">2</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Get Verified</h3>
+              <p className="text-muted-foreground">Admins verify your details to ensure the safety of our network.</p>
+            </div>
+            <div className="text-center relative">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-background relative z-10">
+                <span className="text-3xl font-bold text-primary">3</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Donate</h3>
+              <p className="text-muted-foreground">Connect with receivers and save a life when it matters most.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-background border-t border-border py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Heart className="h-6 w-6 text-primary fill-primary" />
-            <span className="text-xl font-bold font-display tracking-tight">Thebloodonor</span>
+            <span className="text-xl font-bold font-display tracking-tight">TheBlooDonor</span>
           </div>
-          <p className="text-muted-foreground text-sm">© 2024 Thebloodonor. Saving lives, one donation at a time.</p>
+          <p className="text-muted-foreground text-sm">© 2024 TheBlooDonor. Saving lives, one donation at a time.</p>
         </div>
       </footer>
     </div>

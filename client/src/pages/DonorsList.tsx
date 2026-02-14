@@ -12,26 +12,38 @@ import { useAuth } from "@/hooks/use-auth";
 export default function DonorsList() {
   const [bloodGroup, setBloodGroup] = useState<string>("all");
   const [userType, setUserType] = useState<"donor" | "receiver" | undefined>(undefined);
-  
-  const { data: donors, isLoading, error } = useDonors({ 
+  const [city, setCity] = useState<string>("");
+
+  const { data: donors, isLoading, error } = useDonors({
     bloodGroup: bloodGroup === "all" ? undefined : bloodGroup,
-    userType 
+    userType,
+    city: city || undefined
   });
-  
+
   const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50/50">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground mb-2">Find a Donor</h1>
             <p className="text-muted-foreground">Browse eligible donors who are ready to help.</p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full sm:w-48">
+              <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">City</label>
+              <Input
+                placeholder="Filter by city..."
+                className="bg-background"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+
             <div className="w-full sm:w-48">
               <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">Blood Group</label>
               <Select value={bloodGroup} onValueChange={setBloodGroup}>
@@ -51,7 +63,7 @@ export default function DonorsList() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="w-full sm:w-48">
               <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">User Type</label>
               <Select value={userType || "all"} onValueChange={(v) => setUserType(v === "all" ? undefined : v as any)}>
@@ -76,7 +88,7 @@ export default function DonorsList() {
         ) : error ? (
           <div className="text-center py-20 bg-destructive/5 rounded-3xl border border-destructive/20">
             <p className="text-destructive font-semibold">Failed to load donors</p>
-            <Button variant="link" className="text-destructive underline" onClick={() => window.location.reload()}>
+            <Button variant="ghost" className="text-destructive underline" onClick={() => window.location.reload()}>
               Try again
             </Button>
           </div>
